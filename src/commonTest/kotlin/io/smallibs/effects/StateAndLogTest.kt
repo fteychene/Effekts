@@ -19,11 +19,11 @@ class StateAndLogTest {
         val state = atomic(10)
 
         GlobalScope.async {
-            handle<Unit, And<State<Int>, Log>> {
-                val value1 = it.left.get.bind()
-                it.left.set(value1 + 32).bind()
-                val value2 = it.left.get.bind()
-                it.right.log("Done with $value2").bind()
+            handle<Unit, And<State<Int>, Log>> { (state, log) ->
+                val value1 = !state.get
+                !state.set(value1 + 32)
+                val value2 = !state.get
+                !log.log("Done with $value2")
             } with {
                 State<Int>(
                     set = { value ->

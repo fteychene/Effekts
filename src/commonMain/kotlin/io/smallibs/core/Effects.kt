@@ -13,7 +13,10 @@ class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) -> O)
     suspend fun <A> Effect<A>.bind(): A =
         suspendCoroutine { cont -> this(cont) }
 
-    companion object {
+    suspend operator fun <A> Effect<A>.not(): A =
+        suspendCoroutine { cont -> this(cont) }
+
+        companion object {
         fun <O, H : Handler> handle(block: suspend Effects<O, H>.(H) -> O) =
             Effects(block)
     }
